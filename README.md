@@ -1,2 +1,0 @@
-# pollutedCitiesApp
-Created with CodeSandbox
