@@ -1,0 +1,13 @@
+.wrapper {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    background: #fff;
+    border-radius: 4px;
+    margin: 10px 0;
+
+    img {
+        width:200px;
+        filter: brightness(0%);
+    }
+}

@@ -1,7 +1,11 @@
 import React from "react";
+import Form from "../Form/Form";
+import NoResult from "../NoResult/NoResult";
+import markerImg from "../../assets/img/marker.svg";
+import style from "../AutocompleteInput/Autocomplete.module.scss";
 
-const Autocomplete = ({ onChange, onClick, onKeyDown, data }) => {
-  const { filteredSuggestions, showSuggestions, value } = data;
+const Autocomplete = ({ onChange, onClick, onKeyDown, onSubmit, data }) => {
+  const { filteredSuggestions, showSuggestions, value, error} = data;
 
   let suggestionsListComponent;
 
@@ -12,31 +16,29 @@ const Autocomplete = ({ onChange, onClick, onKeyDown, data }) => {
           {filteredSuggestions.map(({ country, code }) => {
             return (
               <li key={code} onClick={onClick}>
-                {country}
+                <img src={markerImg} alt="marker"/>
+                <p>{country}</p>
               </li>
             );
           })}
         </ul>
       );
     } else {
-      suggestionsListComponent = (
-        <div>
-          <em>No suggestions</em>
-        </div>
-      );
+      suggestionsListComponent = <NoResult/>;
     }
   }
 
   return (
-    <>
-      <input
-        type="text"
+    <div className={style.wrapper}>
+      <Form
+        onSubmit={onSubmit}
         onChange={onChange}
         onKeyDown={onKeyDown}
         value={value}
+        autocompleteList={suggestionsListComponent}
+        error={error}
       />
-      {suggestionsListComponent}
-    </>
+    </div>
   );
 };
 
