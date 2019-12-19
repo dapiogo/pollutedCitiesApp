@@ -1,11 +1,14 @@
 import React from "react";
+import Item from "../Item/Item";
+import style from './List.module.scss';
 
-const List = ({cities}) => {
-    console.log(cities.length)
+const List = ({cities,handleDescription, description }) => {
     return (
-        <>
-        { cities.map(el => <p>{el.city}</p>) }
-        </>
+        <div className={style.wrapper}>
+            <ul>
+                {cities.map((data,index) => <Item key={index} {...data} handleDescription={handleDescription} description={description}/>) }
+            </ul>
+        </div>
     )
 }
 

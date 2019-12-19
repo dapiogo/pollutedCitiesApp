@@ -4,8 +4,9 @@ import Header from "../Header/Header";
 import List from "../List/List";
 import Loader from "../Loader/Loader";
 import { countries } from "../../assets/dataCountry/dataCountry";
-import { getAllPollutedCities } from "../../assets/api/api";
+import { getAllPollutedCities, getDescriptionCity } from "../../assets/api/api";
 import { filteredSuggestions as filterSugest, getFullDate as fullDate, removeDuplicateValues } from "../../assets/helpers/helper";
+import { translation } from "../../assets/translation/translation";
 import styled from "../App/app.module.scss";
 
 class App extends Component {
@@ -16,6 +17,8 @@ class App extends Component {
     dataCity:[],
     isLoading: false,
     error:'',
+    isOpened:false,
+    descriptionCity:[]
   };
 
   onChangeAutocomplete = e => {
@@ -74,23 +77,46 @@ class App extends Component {
       });  
 
       const [{ code }] = lengthFilteredSuggestions ? filteredSuggestions : filterSugest(valueLocalStorage, countries);
+
       this.dataPollutedCities(code);
 
     } else {
-      this.setState({ isLoading: false, error:'Wpisz poprawne dane' })
+      this.setState({ isLoading: false, error: translation.correctData })
     }
   }
 
   dataPollutedCities = query => {
     return getAllPollutedCities(query, fullDate)
       .then(({ results }) => {
+        if(results.length){
           this.setState({
             dataCity: removeDuplicateValues(results),
             isLoading: false,
             error:''
           })
-      }).catch(() => this.setState({ isLoading: false }));
+        } else {
+         return this.setState({error: translation.errorApi, isLoading: false,});
+        }
+      })
+      .catch(() => this.setState({ isLoading: false }));
   };
+
+  handleDescriptionCity = city => {
+
+    let descriptionData;
+
+    if(this.state.descriptionCity.city !== city){
+      return getDescriptionCity(city)
+        .then(({ query })=> {
+          const description = query.pages[Object.keys(query.pages)[0]].extract || translation.noSearchResults;
+          descriptionData = { city: city , description: description, isOpened: true }
+          this.setState({ descriptionCity: descriptionData })
+        })
+    } else {
+        descriptionData = { isOpened: false }
+        this.setState({ descriptionCity: descriptionData })
+    }     
+  }
 
   render() {
     const {
@@ -98,9 +124,10 @@ class App extends Component {
       onClickAutocomplete,
       onKeyDownAutocomplete,
       onSubmitAutocomplete,
+      handleDescriptionCity,
       state
     } = this;
-    const { dataCity, isLoading, error } = state;
+    const { dataCity, isLoading, error, descriptionCity } = state;
     return (
       <div className={styled.wrapper}>
         <Header/>
@@ -111,7 +138,13 @@ class App extends Component {
           onSubmit={onSubmitAutocomplete}
           data={state}
         />
-        {isLoading ? <Loader/> : dataCity.length ? <List cities={dataCity}/> : <p className={styled.wrapper__error}>{error}</p>}
+        {isLoading ? <Loader/> : dataCity.length ? 
+          <List 
+            cities={dataCity} 
+            handleDescription={handleDescriptionCity} 
+            description={descriptionCity}
+          /> 
+        : <p className={styled.wrapper__error}>{error}</p>}
       </div>
     );
   }

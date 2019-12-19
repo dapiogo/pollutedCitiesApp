@@ -12,6 +12,10 @@
 }
 
 body {
-  background:url('../src/assets/img/background.png');
-  background-size: 100% 100vh;
+  background: #879ffe;
+
+  @media (min-width: 500px) {
+    background:url('../src/assets/img/background.png');
+    background-size: 100% 100vh;
+  }
 }

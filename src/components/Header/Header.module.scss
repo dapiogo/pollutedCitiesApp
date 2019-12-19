@@ -4,7 +4,6 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        margin: 20px 0;
         text-decoration: none;
         color:#000;
     
@@ -15,6 +14,7 @@
     
         h1 {
             text-transform: uppercase;
+            text-align: center;
         }
     }
 
